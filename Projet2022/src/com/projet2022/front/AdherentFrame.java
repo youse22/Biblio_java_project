@@ -1,3 +1,4 @@
+
 package com.projet2022.front;
 
 import javax.swing.*;
@@ -13,7 +14,8 @@ import projet2022.Adherent;
 public class AdherentFrame extends JFrame {
     
     private JPanel mainPanel; // Panneau principal avec CardLayout
-
+    GestionAdherant gestionAdherant = new GestionAdherant();
+    
     public AdherentFrame() {
         setTitle("Gestion des Adhérents");
         setSize(800, 600);
@@ -96,45 +98,86 @@ public class AdherentFrame extends JFrame {
 
 // Panneau pour ajouter un adhérent
 private JPanel createAddAdherentPanel() {
-    final JPanel panel = new JPanel();
-    panel.setLayout(new GridLayout(9, 2)); // Modifier le nombre de lignes à 9 pour inclure tous les champs
+    // Panneau principal
+    final JPanel panel = new JPanel(new GridBagLayout());
     panel.setBackground(Color.decode("#ECF0F1"));
 
-    final JTextField idField = new JTextField(); // Declare as final
-    final JTextField cinField = new JTextField(); // Declare as final
-    final JTextField lastNameField = new JTextField(); // Declare as final
-    final JTextField firstNameField = new JTextField(); // Declare as final
-    final JTextField phoneField = new JTextField(); // Declare as final
-    final JTextField addressField = new JTextField(); // Declare as final
-    final JTextField faculteField = new JTextField(); // Declare as final
-    final JTextField vacationField = new JTextField(); // Declare as final
-    final JTextField niveauField = new JTextField(); // Declare as final
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(10, 10, 10, 10);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.anchor = GridBagConstraints.WEST;
+    gbc.weightx = 1.0;
 
-    panel.add(new JLabel("ID Adhérent:"));
-    panel.add(idField);
-    panel.add(new JLabel("CIN:"));
-    panel.add(cinField);
-    panel.add(new JLabel("Nom:"));
-    panel.add(lastNameField);
-    panel.add(new JLabel("Prénom:"));
-    panel.add(firstNameField);
-    panel.add(new JLabel("Téléphone:"));
-    panel.add(phoneField);
-    panel.add(new JLabel("Adresse:"));
-    panel.add(addressField);
-    panel.add(new JLabel("Faculté:"));
-    panel.add(faculteField);
-    panel.add(new JLabel("Vacation:"));
-    panel.add(vacationField);
-    panel.add(new JLabel("Niveau:"));
-    panel.add(niveauField);
+    // Suppression du champ pour l'ID
+    final JTextField cinField = new JTextField(15);
+    final JTextField lastNameField = new JTextField(15);
+    final JTextField firstNameField = new JTextField(15);
+    final JTextField phoneField = new JTextField(15);
+    final JTextField addressField = new JTextField(15);
+    final JTextField faculteField = new JTextField(15);
+    final JTextField vacationField = new JTextField(15);
+    final JTextField niveauField = new JTextField(15);
 
+    // Ajouter les labels et les champs de texte sur deux colonnes
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    panel.add(new JLabel("CIN:"), gbc);
+    gbc.gridx = 1;
+    panel.add(cinField, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy++;
+    panel.add(new JLabel("Nom:"), gbc);
+    gbc.gridx = 1;
+    panel.add(lastNameField, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy++;
+    panel.add(new JLabel("Prénom:"), gbc);
+    gbc.gridx = 1;
+    panel.add(firstNameField, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy++;
+    panel.add(new JLabel("Téléphone:"), gbc);
+    gbc.gridx = 1;
+    panel.add(phoneField, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy++;
+    panel.add(new JLabel("Adresse:"), gbc);
+    gbc.gridx = 1;
+    panel.add(addressField, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy++;
+    panel.add(new JLabel("Faculté:"), gbc);
+    gbc.gridx = 1;
+    panel.add(faculteField, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy++;
+    panel.add(new JLabel("Vacation:"), gbc);
+    gbc.gridx = 1;
+    panel.add(vacationField, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy++;
+    panel.add(new JLabel("Niveau:"), gbc);
+    gbc.gridx = 1;
+    panel.add(niveauField, gbc);
+
+    // Bouton pour ajouter l'adhérent
     JButton addButton = new JButton("Ajouter");
+    gbc.gridx = 1;
+    gbc.gridy++;
+    gbc.anchor = GridBagConstraints.CENTER;  // Centrer le bouton
+    panel.add(addButton, gbc);
+
+    // Action à effectuer lors de l'ajout de l'adhérent
     addButton.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Logique pour ajouter un adhérent ici
-            String id = idField.getText();
             String cin = cinField.getText();
             String lastName = lastNameField.getText();
             String firstName = firstNameField.getText();
@@ -144,18 +187,13 @@ private JPanel createAddAdherentPanel() {
             String vacation = vacationField.getText();
             String niveau = niveauField.getText();
 
-            // Créer une instance de GestionAdherant
             GestionAdherant gestionAdherant = new GestionAdherant();
-            Adherent newAdherent = new Adherent(id, cin, lastName, firstName, phone, address, faculte, vacation, niveau);
-            
-            // Ajouter l'adhérent à la base de données
+            Adherent newAdherent = new Adherent(null, cin, lastName, firstName, phone, address, faculte, vacation, niveau);
             gestionAdherant.addAdherant(newAdherent);
-            
-            // Afficher un message de succès
+
+           gestionAdherant.getAllAdherant();
             JOptionPane.showMessageDialog(panel, "Adhérent ajouté avec succès!");
-            
-            // Réinitialiser les champs après l'ajout
-            idField.setText("");
+
             cinField.setText("");
             lastNameField.setText("");
             firstNameField.setText("");
@@ -167,9 +205,84 @@ private JPanel createAddAdherentPanel() {
         }
     });
 
-    panel.add(addButton);
     return panel;
 }
+
+//private JPanel createAddAdherentPanel() {
+//    final JPanel panel = new JPanel();
+//    panel.setLayout(new GridLayout(9, 2)); // Modifier le nombre de lignes à 9 pour inclure tous les champs
+//    panel.setBackground(Color.decode("#ECF0F1"));
+//
+//    final JTextField idField = new JTextField(); // Declare as final
+//    final JTextField cinField = new JTextField(); // Declare as final
+//    final JTextField lastNameField = new JTextField(); // Declare as final
+//    final JTextField firstNameField = new JTextField(); // Declare as final
+//    final JTextField phoneField = new JTextField(); // Declare as final
+//    final JTextField addressField = new JTextField(); // Declare as final
+//    final JTextField faculteField = new JTextField(); // Declare as final
+//    final JTextField vacationField = new JTextField(); // Declare as final
+//    final JTextField niveauField = new JTextField(); // Declare as final
+//
+//    panel.add(new JLabel("ID Adhérent:"));
+//    panel.add(idField);
+//    panel.add(new JLabel("CIN:"));
+//    panel.add(cinField);
+//    panel.add(new JLabel("Nom:"));
+//    panel.add(lastNameField);
+//    panel.add(new JLabel("Prénom:"));
+//    panel.add(firstNameField);
+//    panel.add(new JLabel("Téléphone:"));
+//    panel.add(phoneField);
+//    panel.add(new JLabel("Adresse:"));
+//    panel.add(addressField);
+//    panel.add(new JLabel("Faculté:"));
+//    panel.add(faculteField);
+//    panel.add(new JLabel("Vacation:"));
+//    panel.add(vacationField);
+//    panel.add(new JLabel("Niveau:"));
+//    panel.add(niveauField);
+//
+//    JButton addButton = new JButton("Ajouter");
+//    addButton.addActionListener(new ActionListener() {
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//            // Logique pour ajouter un adhérent ici
+//            String id = idField.getText();
+//            String cin = cinField.getText();
+//            String lastName = lastNameField.getText();
+//            String firstName = firstNameField.getText();
+//            String phone = phoneField.getText();
+//            String address = addressField.getText();
+//            String faculte = faculteField.getText();
+//            String vacation = vacationField.getText();
+//            String niveau = niveauField.getText();
+//
+//            // Créer une instance de GestionAdherant
+//            GestionAdherant gestionAdherant = new GestionAdherant();
+//            Adherent newAdherent = new Adherent(id, cin, lastName, firstName, phone, address, faculte, vacation, niveau);
+//            
+//            // Ajouter l'adhérent à la base de données
+//            gestionAdherant.addAdherant(newAdherent);
+//            
+//            // Afficher un message de succès
+//            JOptionPane.showMessageDialog(panel, "Adhérent ajouté avec succès!");
+//            
+//            // Réinitialiser les champs après l'ajout
+//            idField.setText("");
+//            cinField.setText("");
+//            lastNameField.setText("");
+//            firstNameField.setText("");
+//            phoneField.setText("");
+//            addressField.setText("");
+//            faculteField.setText("");
+//            vacationField.setText("");
+//            niveauField.setText("");
+//        }
+//    });
+//
+//    panel.add(addButton);
+//    return panel;
+//}
 
 //    // Panneau pour mettre à jour un adhérent
 //    private JPanel createUpdateAdherentPanel() {
@@ -181,10 +294,10 @@ private JPanel createAddAdherentPanel() {
 // Panneau pour mettre à jour un adhérent
 private JPanel createUpdateAdherentPanel() {
     final JPanel panel = new JPanel();
-    panel.setLayout(new GridLayout(10, 2)); // 10 rows to include all fields and buttons
+    panel.setLayout(new GridLayout(10, 2)); // 10 lignes pour les champs et boutons
     panel.setBackground(Color.decode("#ECF0F1"));
 
-    // Fields for entering adherent information
+    // Champs pour saisir les informations de l'adhérent
     final JTextField idField = new JTextField();
     final JTextField cinField = new JTextField();
     final JTextField lastNameField = new JTextField();
@@ -195,7 +308,7 @@ private JPanel createUpdateAdherentPanel() {
     final JTextField vacationField = new JTextField();
     final JTextField niveauField = new JTextField();
 
-    // Add labels and fields to the panel
+    // Ajout des labels et champs au panneau
     panel.add(new JLabel("ID Adhérent:"));
     panel.add(idField);
     panel.add(new JLabel("CIN:"));
@@ -215,12 +328,12 @@ private JPanel createUpdateAdherentPanel() {
     panel.add(new JLabel("Niveau:"));
     panel.add(niveauField);
 
-    // Update button
+    // Bouton pour mettre à jour
     JButton updateButton = new JButton("Mettre à jour");
     updateButton.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Logique pour mettre à jour l'adhérent ici
+            // Récupérer les valeurs des champs
             String id = idField.getText();
             String cin = cinField.getText();
             String lastName = lastNameField.getText();
@@ -231,22 +344,29 @@ private JPanel createUpdateAdherentPanel() {
             String vacation = vacationField.getText();
             String niveau = niveauField.getText();
 
-            // Créer une instance de GestionAdherant
-            GestionAdherant gestionAdherant = new GestionAdherant();
+            // Vérification que l'ID n'est pas vide
+            if (id.isEmpty()) {
+                JOptionPane.showMessageDialog(panel, "L'ID de l'adhérent est requis pour mettre à jour.");
+                return;
+            }
+
+            // Créer une instance d'Adherent avec les nouvelles valeurs
             Adherent updatedAdherent = new Adherent(id, cin, lastName, firstName, phone, address, faculte, vacation, niveau);
-            
+
             try {
                 // Mettre à jour l'adhérent dans la base de données
-                gestionAdherant.updateAdherant(updatedAdherent); // Assurez-vous que cette méthode est correctement implémentée
-
+                GestionAdherant gestionAdherant = new GestionAdherant();
+                gestionAdherant.updateAdherant(updatedAdherent);
+                
+           gestionAdherant.getAllAdherant();
                 // Afficher un message de succès
                 JOptionPane.showMessageDialog(panel, "Adhérent mis à jour avec succès!");
             } catch (Exception ex) {
                 // Afficher un message d'erreur
                 JOptionPane.showMessageDialog(panel, "Erreur lors de la mise à jour de l'adhérent: " + ex.getMessage());
             }
-            
-            // Réinitialiser les champs après l'ajout
+
+            // Réinitialiser les champs après la mise à jour
             idField.setText("");
             cinField.setText("");
             lastNameField.setText("");
@@ -262,6 +382,90 @@ private JPanel createUpdateAdherentPanel() {
     panel.add(updateButton);
     return panel;
 }
+
+//private JPanel createUpdateAdherentPanel() {
+//    final JPanel panel = new JPanel();
+//    panel.setLayout(new GridLayout(10, 2)); // 10 rows to include all fields and buttons
+//    panel.setBackground(Color.decode("#ECF0F1"));
+//
+//    // Fields for entering adherent information
+//    final JTextField idField = new JTextField();
+//    final JTextField cinField = new JTextField();
+//    final JTextField lastNameField = new JTextField();
+//    final JTextField firstNameField = new JTextField();
+//    final JTextField phoneField = new JTextField();
+//    final JTextField addressField = new JTextField();
+//    final JTextField faculteField = new JTextField();
+//    final JTextField vacationField = new JTextField();
+//    final JTextField niveauField = new JTextField();
+//
+//    // Add labels and fields to the panel
+//    panel.add(new JLabel("ID Adhérent:"));
+//    panel.add(idField);
+//    panel.add(new JLabel("CIN:"));
+//    panel.add(cinField);
+//    panel.add(new JLabel("Nom:"));
+//    panel.add(lastNameField);
+//    panel.add(new JLabel("Prénom:"));
+//    panel.add(firstNameField);
+//    panel.add(new JLabel("Téléphone:"));
+//    panel.add(phoneField);
+//    panel.add(new JLabel("Adresse:"));
+//    panel.add(addressField);
+//    panel.add(new JLabel("Faculté:"));
+//    panel.add(faculteField);
+//    panel.add(new JLabel("Vacation:"));
+//    panel.add(vacationField);
+//    panel.add(new JLabel("Niveau:"));
+//    panel.add(niveauField);
+//
+//    // Update button
+//    JButton updateButton = new JButton("Mettre à jour");
+//    updateButton.addActionListener(new ActionListener() {
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//            // Logique pour mettre à jour l'adhérent ici
+//            String id = idField.getText();
+//            String cin = cinField.getText();
+//            String lastName = lastNameField.getText();
+//            String firstName = firstNameField.getText();
+//            String phone = phoneField.getText();
+//            String address = addressField.getText();
+//            String faculte = faculteField.getText();
+//            String vacation = vacationField.getText();
+//            String niveau = niveauField.getText();
+//
+//            // Créer une instance de GestionAdherant
+//            GestionAdherant gestionAdherant = new GestionAdherant();
+//            Adherent updatedAdherent = new Adherent(id, cin, lastName, firstName, phone, address, faculte, vacation, niveau);
+//            
+//            try {
+//                // Mettre à jour l'adhérent dans la base de données
+//                gestionAdherant.updateAdherant(updatedAdherent); // Assurez-vous que cette méthode est correctement implémentée
+//
+//                // Afficher un message de succès
+//                JOptionPane.showMessageDialog(panel, "Adhérent mis à jour avec succès!");
+//            } catch (Exception ex) {
+//                // Afficher un message d'erreur
+//                JOptionPane.showMessageDialog(panel, "Erreur lors de la mise à jour de l'adhérent: " + ex.getMessage());
+//            }
+//            
+//            // Réinitialiser les champs après l'ajout
+//            idField.setText("");
+//            cinField.setText("");
+//            lastNameField.setText("");
+//            firstNameField.setText("");
+//            phoneField.setText("");
+//            addressField.setText("");
+//            faculteField.setText("");
+//            vacationField.setText("");
+//            niveauField.setText("");
+//        }
+//    });
+//
+//    panel.add(updateButton);
+//    return panel;
+//}
 
 
 //    // Panneau pour lister les adhérents

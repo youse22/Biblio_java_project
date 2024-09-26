@@ -101,67 +101,129 @@ public class LivresFrame extends JFrame {
     private void showPanel(String panelName) {
         cardLayout.show(contentPanel, panelName);
     }
+        
+private void addLivreAction(String isbn, String titre, String auteur, String anneeStr,
+                             JTextField txtIsbn, JTextField txtTitre, JTextField txtAuteur, JTextField txtAnnee) {
+    // Vérification si les champs ne sont pas vides
+    if (isbn.isEmpty() || titre.isEmpty() || auteur.isEmpty() || anneeStr.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Veuillez remplir tous les champs !");
+        return;
+    }
+
+    try {
+        int annee = Integer.parseInt(anneeStr);
+        Livre livre = new Livre(isbn, titre, auteur, annee);
+
+        if (gestionLivre.addLivre(livre)) {
+            // Réinitialiser les champs après l'ajout
+            txtIsbn.setText("");
+            txtTitre.setText("");
+            txtAuteur.setText("");
+            txtAnnee.setText("");
+            JOptionPane.showMessageDialog(null, "Livre ajouté avec succès !");
+        } else {
+            JOptionPane.showMessageDialog(null, "Erreur lors de l'ajout du livre. Vérifiez les données.");
+        }
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(null, "Veuillez entrer une année valide !");
+    }
+}
+
 
     // Panneau pour ajouter un livre
     private JPanel createAddLivrePanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(6, 2));
+    JPanel panel = new JPanel();
+    panel.setLayout(new GridLayout(6, 2));
 
-        JLabel lblIsbn = new JLabel("ISBN:");
-        final JTextField txtIsbn = new JTextField();
-        JLabel lblTitre = new JLabel("Titre:");
-        final JTextField txtTitre = new JTextField();
-        JLabel lblAuteur = new JLabel("Auteur:");
-        final JTextField txtAuteur = new JTextField();
-        JLabel lblAnnee = new JLabel("Année de publication:");
-        final JTextField txtAnnee = new JTextField();
+    JLabel lblIsbn = new JLabel("ISBN:");
+    final JTextField txtIsbn = new JTextField();
+    JLabel lblTitre = new JLabel("Titre:");
+    final JTextField txtTitre = new JTextField();
+    JLabel lblAuteur = new JLabel("Auteur:");
+    final JTextField txtAuteur = new JTextField();
+    JLabel lblAnnee = new JLabel("Année de publication:");
+    final JTextField txtAnnee = new JTextField();
 
-        JButton btnAddLivre = new JButton("Ajouter Livre");
-        btnAddLivre.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Récupération des valeurs des champs de texte
-                String isbn = txtIsbn.getText();
-                String titre = txtTitre.getText();
-                String auteur = txtAuteur.getText();
-                String anneeStr = txtAnnee.getText();
+    JButton btnAddLivre = new JButton("Ajouter Livre");
+    btnAddLivre.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            addLivreAction(txtIsbn.getText(), txtTitre.getText(), txtAuteur.getText(), txtAnnee.getText(), txtIsbn, txtTitre, txtAuteur, txtAnnee);
+        }
+    });
 
-                // Vérification si les champs ne sont pas vides
-                if (isbn.isEmpty() || titre.isEmpty() || auteur.isEmpty() || anneeStr.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Veuillez remplir tous les champs !");
-                    return;
-                }
+    panel.add(lblIsbn);
+    panel.add(txtIsbn);
+    panel.add(lblTitre);
+    panel.add(txtTitre);
+    panel.add(lblAuteur);
+    panel.add(txtAuteur);
+    panel.add(lblAnnee);
+    panel.add(txtAnnee);
+    panel.add(new JLabel()); // Pour aligner le bouton à droite
+    panel.add(btnAddLivre);
 
-                try {
-                    int annee = Integer.parseInt(anneeStr);
-                    Livre livre = new Livre(isbn, titre, auteur, annee);
-                    gestionLivre.addLivre(livre);
-
-                    // Réinitialiser les champs après l'ajout
-                    txtIsbn.setText("");
-                    txtTitre.setText("");
-                    txtAuteur.setText("");
-                    txtAnnee.setText("");
-                    JOptionPane.showMessageDialog(null, "Livre ajouté avec succès !");
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Veuillez entrer une année valide !");
-                }
-            }
-        });
-
-        panel.add(lblIsbn);
-        panel.add(txtIsbn);
-        panel.add(lblTitre);
-        panel.add(txtTitre);
-        panel.add(lblAuteur);
-        panel.add(txtAuteur);
-        panel.add(lblAnnee);
-        panel.add(txtAnnee);
-        panel.add(new JLabel()); // Pour aligner le bouton à droite
-        panel.add(btnAddLivre);
-
-        return panel;
-    }
+    return panel;
+}
+//    private JPanel createAddLivrePanel() {
+//        JPanel panel = new JPanel();
+//        panel.setLayout(new GridLayout(6, 2));
+//
+//        JLabel lblIsbn = new JLabel("ISBN:");
+//        final JTextField txtIsbn = new JTextField();
+//        JLabel lblTitre = new JLabel("Titre:");
+//        final JTextField txtTitre = new JTextField();
+//        JLabel lblAuteur = new JLabel("Auteur:");
+//        final JTextField txtAuteur = new JTextField();
+//        JLabel lblAnnee = new JLabel("Année de publication:");
+//        final JTextField txtAnnee = new JTextField();
+//
+//        JButton btnAddLivre = new JButton("Ajouter Livre");
+//        btnAddLivre.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                // Récupération des valeurs des champs de texte
+//                String isbn = txtIsbn.getText();
+//                String titre = txtTitre.getText();
+//                String auteur = txtAuteur.getText();
+//                String anneeStr = txtAnnee.getText();
+//
+//                // Vérification si les champs ne sont pas vides
+//                if (isbn.isEmpty() || titre.isEmpty() || auteur.isEmpty() || anneeStr.isEmpty()) {
+//                    JOptionPane.showMessageDialog(null, "Veuillez remplir tous les champs !");
+//                    return;
+//                }
+//
+//                try {
+//                    int annee = Integer.parseInt(anneeStr);
+//                    Livre livre = new Livre(isbn, titre, auteur, annee);
+//                    gestionLivre.addLivre(livre);
+//
+//                    // Réinitialiser les champs après l'ajout
+//                    txtIsbn.setText("");
+//                    txtTitre.setText("");
+//                    txtAuteur.setText("");
+//                    txtAnnee.setText("");
+//                    JOptionPane.showMessageDialog(null, "Livre ajouté avec succès !");
+//                } catch (NumberFormatException ex) {
+//                    JOptionPane.showMessageDialog(null, "Veuillez entrer une année valide !");
+//                }
+//            }
+//        });
+//
+//        panel.add(lblIsbn);
+//        panel.add(txtIsbn);
+//        panel.add(lblTitre);
+//        panel.add(txtTitre);
+//        panel.add(lblAuteur);
+//        panel.add(txtAuteur);
+//        panel.add(lblAnnee);
+//        panel.add(txtAnnee);
+//        panel.add(new JLabel()); // Pour aligner le bouton à droite
+//        panel.add(btnAddLivre);
+//
+//        return panel;
+//    }
 
     // Panneau pour mettre à jour un livre
     private JPanel createUpdateLivrePanel() {

@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 
 /**
@@ -17,36 +18,68 @@ import java.sql.PreparedStatement;
  */
 public class GestionAdherant {
     
-    public void addAdherant(Adherent ad){
-        ConnectToDb dbConection = new ConnectToDb();
-        
-        //Adherent ad = new Adherent("Etu-002","2930893789","LORDEUS","Vonise","+50938579489","Delmas","FSA","Matin","L4");
-        String b ="";
-        String req3 ="INSERT INTO `Adherant` (`id_e`, `cin`,`last_name`,`first_name`,`phone`,`adresse`,`faculte`,`vacation`,"
-                + "`niveau`)VALUES ('"+ad.getId_etu()+"', '"+ad.getCin()+"', '"+ad.getLast_name()+"', '"+ad.getFirst_name()+"',"
-                + "'"+ad.getPhone()+"','"+ad.getAddress()+"','"+ad.getFaculte()+"','"+ad.getVacation()+"','"+ad.getNiveau()+"')";
-        
-        //String req ="INSERT INTO `Adherant` (`id_e`, `cin`,`last_name`,`first_name`,`phone`,`adresse`,`faculte`,`vacation`,"
-        //       + "`niveau`)VALUES ('Etu-001', '1234987230', 'LORDEUS', 'Max-Gary','50948175665','Delmas 33',"
-        //        + "'FSI','Matin','L3')";
-        
-        try{
-            dbConection.chargerDriver();     
-            try (Connection conn = dbConection.connexion("Yousenie", "lordeus", "bibliotheque_db")) {
+ public void addAdherant(Adherent ad){
+    ConnectToDb dbConnection = new ConnectToDb();
+    // Suppression de la colonne 'id_e' de la requête d'insertion
+    String req = "INSERT INTO Adherant (cin, last_name, first_name, phone, adresse, faculte, vacation, niveau) "
+               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-                Statement stat = dbConection.requete(conn);
-                //String req1 ="select * from Adherant";
-                int rowsUpdated = stat.executeUpdate(req3);
-                System.out.println(rowsUpdated);
-                //ResultSet res = stat.executeQuery(req1);
-                conn.close();
-            }
-            
-        }catch(Exception e){
-            System.out.println("error"+ e);
+    try {
+        dbConnection.chargerDriver();     
+        try (Connection conn = dbConnection.connexion("Yousenie", "lordeus", "bibliotheque_db");
+             PreparedStatement stmt = conn.prepareStatement(req)) {
+
+            // Modification pour correspondre aux nouvelles colonnes (sans id_e)
+            stmt.setString(1, ad.getCin());
+            stmt.setString(2, ad.getLast_name());
+            stmt.setString(3, ad.getFirst_name());
+            stmt.setString(4, ad.getPhone());
+            stmt.setString(5, ad.getAddress());
+            stmt.setString(6, ad.getFaculte());
+            stmt.setString(7, ad.getVacation());
+            stmt.setString(8, ad.getNiveau());
+
+            int rowsUpdated = stmt.executeUpdate();
+            System.out.println(rowsUpdated + " row(s) affected.");
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Affiche une trace complète de l'erreur
         }
+    } catch (Exception e) {
+        e.printStackTrace();
     }
-    
+}
+
+//    public void addAdherant(Adherent ad){
+//        ConnectToDb dbConection = new ConnectToDb();
+//        
+//        //Adherent ad = new Adherent("Etu-002","2930893789","LORDEUS","Vonise","+50938579489","Delmas","FSA","Matin","L4");
+//        String b ="";
+//        String req3 ="INSERT INTO `Adherant` (`id_e`, `cin`,`last_name`,`first_name`,`phone`,`adresse`,`faculte`,`vacation`,"
+//                + "`niveau`)VALUES ('"+ad.getId_etu()+"', '"+ad.getCin()+"', '"+ad.getLast_name()+"', '"+ad.getFirst_name()+"',"
+//                + "'"+ad.getPhone()+"','"+ad.getAddress()+"','"+ad.getFaculte()+"','"+ad.getVacation()+"','"+ad.getNiveau()+"')";
+//        
+//        //String req ="INSERT INTO `Adherant` (`id_e`, `cin`,`last_name`,`first_name`,`phone`,`adresse`,`faculte`,`vacation`,"
+//        //       + "`niveau`)VALUES ('Etu-001', '1234987230', 'LORDEUS', 'Max-Gary','50948175665','Delmas 33',"
+//        //        + "'FSI','Matin','L3')";
+//        
+//        try{
+//            dbConection.chargerDriver();     
+//            try (Connection conn = dbConection.connexion("Yousenie", "lordeus", "bibliotheque_db")) {
+//
+//                Statement stat = dbConection.requete(conn);
+//                //String req1 ="select * from Adherant";
+//                int rowsUpdated = stat.executeUpdate(req3);
+//                System.out.println(rowsUpdated);
+//                //ResultSet res = stat.executeQuery(req1);
+//                conn.close();
+//            }
+//            
+//        }catch(Exception e){
+//            System.out.println("error"+ e);
+//        }
+//    }
+//    
 //    //get all the students
     // Récupérer tous les adhérents avec statut visible
 public ArrayList<Adherent> getAllAdherant() {
@@ -219,31 +252,71 @@ public ArrayList<Adherent> getAllAdherant() {
 //    }
 //    
     //update adherant
+    public void updateAdherant(Adherent adhe) {
+    ConnectToDb dbConnection = new ConnectToDb();
+    PreparedStatement statement = null;
     
-    public void updateAdherant(Adherent adhe){
-        ConnectToDb dbConnection = new ConnectToDb();
-        PreparedStatement statement = null;
-        
-        try(Connection conn = dbConnection.connexion("Yousenie", "lordeus", "bibliotheque_db")){
-            //Statement stat = dbConnection.requete(conn);
-            String sql = "UPDATE adherant SET last_name = ?, first_name = ?, faculte = ?, niveau = ?, cin = ?," 
-                    +" vacation =?, phone=? WHERE id_e = ?";
-            statement = conn.prepareStatement(sql);
-            
-            statement.setString(1, adhe.getLast_name());
-            statement.setString(2, adhe.getFirst_name());
-            statement.setString(3, adhe.getFaculte());
-            statement.setString(4, adhe.getNiveau());
-            statement.setString(5, adhe.getCin());
-            statement.setString(6, adhe.getVacation());
-            statement.setString(7, adhe.getPhone());
-            statement.setString(8, adhe.getId_etu());
-            
-            int rowsAffected = statement.executeUpdate();
-            System.out.println(rowsAffected + " row(s) updated successfully.");
-            conn.close();
-        }catch(Exception e){
-            System.out.println(e);
+    try (Connection conn = dbConnection.connexion("Yousenie", "lordeus", "bibliotheque_db")) {
+        if (conn == null) {
+            System.out.println("Erreur : la connexion à la base de données a échoué.");
+            return;
         }
+
+        // Requête de mise à jour SQL
+        String sql = "UPDATE adherant SET last_name = ?, first_name = ?, faculte = ?, niveau = ?, cin = ?, vacation = ?, phone = ? WHERE id_e = ?";
+        statement = conn.prepareStatement(sql);
+        
+        // Affectation des paramètres
+        statement.setString(1, adhe.getLast_name());
+        statement.setString(2, adhe.getFirst_name());
+        statement.setString(3, adhe.getFaculte());
+        statement.setString(4, adhe.getNiveau());
+        statement.setString(5, adhe.getCin());
+        statement.setString(6, adhe.getVacation());
+        statement.setString(7, adhe.getPhone());
+        statement.setString(8, adhe.getId_etu());
+
+        // Exécution de la mise à jour
+        int rowsAffected = statement.executeUpdate();
+        
+        // Vérification du nombre de lignes mises à jour
+        if (rowsAffected > 0) {
+            System.out.println(rowsAffected + " ligne(s) mise(s) à jour avec succès.");
+        } else {
+            System.out.println("Aucune ligne mise à jour. Vérifiez si l'ID existe.");
+        }
+        
+    } catch (SQLException e) {
+        System.out.println("Erreur lors de la mise à jour de l'adhérent : " + e.getMessage());
+        e.printStackTrace();
     }
+}
+
+//    public void updateAdherant(Adherent adhe){
+//        ConnectToDb dbConnection = new ConnectToDb();
+//        PreparedStatement statement = null;
+//        
+//        try(Connection conn = dbConnection.connexion("Yousenie", "lordeus", "bibliotheque_db")){
+//            //Statement stat = dbConnection.requete(conn);
+//            String sql = "UPDATE adherant SET last_name = ?, first_name = ?, faculte = ?, niveau = ?, cin = ?," 
+//                    +" vacation =?, phone=? WHERE id_e = ?";
+//            statement = conn.prepareStatement(sql);
+//            
+//            statement.setString(1, adhe.getLast_name());
+//            statement.setString(2, adhe.getFirst_name());
+//            statement.setString(3, adhe.getFaculte());
+//            statement.setString(4, adhe.getNiveau());
+//            statement.setString(5, adhe.getCin());
+//            statement.setString(6, adhe.getVacation());
+//            statement.setString(7, adhe.getPhone());
+//            statement.setString(8, adhe.getId_etu());
+//            
+//            int rowsAffected = statement.executeUpdate();
+//            System.out.println(rowsAffected + " row(s) updated successfully.");
+//            conn.close();
+//        }catch(Exception e){
+//            System.out.println(e);
+//        }
+//    }
+
 }

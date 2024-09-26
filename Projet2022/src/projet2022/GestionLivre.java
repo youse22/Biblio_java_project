@@ -1,172 +1,153 @@
+/*
+ * To change this license hebooker, choose License Hebookers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package projet2022;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
-import java.util.List;
+import java.sql.PreparedStatement;
 
+/**
+ * Classe pour la gestion des livres dans la bibliothèque
+ * Auteur : Marie-Vonise LORDEUS
+ */
 public class GestionLivre {
-    private static final String DB_USER = "Yousenie";
-    private static final String DB_PASS = "lordeus";
-    private static final String DB_NAME = "bibliotheque_db";
-public boolean addLivre(Livre livre) {
-    ConnectToDb dbConnection = new ConnectToDb();
-    String sql = "INSERT INTO livres (isbn, titre, auteur, annee) VALUES (?, ?, ?, ?)";
 
-    try {
-        dbConnection.chargerDriver();
-        try (Connection conn = dbConnection.connexion(DB_USER, DB_PASS, DB_NAME);
-             PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setString(1, livre.getIsbn());
-            statement.setString(2, livre.getTitre());
-            statement.setString(3, livre.getAuteur());
-            statement.setInt(4, livre.getAnnee());
-
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0; // true si l'enregistrement a réussi
-        }
-    } catch (Exception e) {
-        System.out.println("Error while adding book: " + e.getMessage());
-        return false;
-    }
-}
-
-//    public void addLivre(Livre book) {
-//        ConnectToDb dbConnection = new ConnectToDb();
-//        String sql = "INSERT INTO livres (id, titre, auteur, edition, nbreExemp, status, etat) VALUES (?, ?, ?, ?, ?, ?, ?)";
-//
-//        try {
-//            dbConnection.chargerDriver();
-//            try (Connection conn = dbConnection.connexion(DB_USER, DB_PASS, DB_NAME);
-//                 PreparedStatement statement = conn.prepareStatement(sql)) {
-//                statement.setString(1, book.getCodeLivre());
-//                statement.setString(2, book.getTitre());
-//                statement.setString(3, book.getAuteur());
-//                statement.setString(4, book.getEdition());
-//                statement.setInt(5, book.getNbreExemp());
-//                statement.setString(6, book.getStatut());
-//                statement.setString(7, book.getEtat());
-//
-//                int rowsUpdated = statement.executeUpdate();
-//                System.out.println(rowsUpdated + " record(s) inserted.");
-//            }
-//        } catch (Exception e) {
-//            System.out.println("Error while adding book: " + e.getMessage());
-//        }
-//    }
-
-    public ArrayList<Livre> getAllLivre() {
+    // Méthode pour ajouter un livre
+    public void addLivre(Livre book) {
         ConnectToDb dbConnection = new ConnectToDb();
-        ArrayList<Livre> bookList = new ArrayList<>();
-
-        String sql = "SELECT * FROM livres";
+        String req = "INSERT INTO `livres` (`id`, `titre`, `auteur`, `edition`, `nbreExemp`, `status`, `etat`) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try {
             dbConnection.chargerDriver();
-            try (Connection conn = dbConnection.connexion(DB_USER, DB_PASS, DB_NAME);
-                 Statement statement = conn.createStatement();
-                 ResultSet resultSet = statement.executeQuery(sql)) {
-                
-                while (resultSet.next()) {
-                    String id = resultSet.getString("id");
-                    String titre = resultSet.getString("titre");
-                    String auteur = resultSet.getString("auteur");
-                    String edition = resultSet.getString("edition");
-                    String status = resultSet.getString("status");
-                    String etat = resultSet.getString("etat");
-                    int nbreExemp = resultSet.getInt("nbreExemp");
+            try (Connection conn = dbConnection.connexion("Yousenie", "lordeus", "bibliotheque_db");
+                 PreparedStatement preparedStatement = conn.prepareStatement(req)) {
+
+                preparedStatement.setString(1, book.getCodeLivre());
+                preparedStatement.setString(2, book.getTitre());
+                preparedStatement.setString(3, book.getAuteur());
+                preparedStatement.setString(4, book.getEdition());
+                preparedStatement.setInt(5, book.getNbreExemp());
+                preparedStatement.setString(6, book.getStatut());
+                preparedStatement.setString(7, book.getEtat());
+
+                int rowsUpdated = preparedStatement.executeUpdate();
+                System.out.println(rowsUpdated + " livre(s) ajouté(s) avec succès.");
+            }
+        } catch (Exception e) {
+            System.out.println("Erreur lors de l'ajout du livre : " + e);
+        }
+    }
+
+    // Méthode pour obtenir tous les livres
+    public ArrayList<Livre> getAllLivre() {
+        ConnectToDb dbConnection = new ConnectToDb();
+        ArrayList<Livre> myList = new ArrayList<>();
+        
+        try {
+            dbConnection.chargerDriver();
+            try (Connection conn = dbConnection.connexion("Yousenie", "lordeus", "bibliotheque_db");
+                 Statement stat = dbConnection.requete(conn)) {
+
+                String req = "SELECT * FROM livres";
+                ResultSet res = stat.executeQuery(req);
+
+                while (res.next()) {
+                    String id = res.getString("id");
+                    String titre = res.getString("titre");
+                    String auteur = res.getString("auteur");
+                    String edition = res.getString("edition");
+                    String status = res.getString("status");
+                    String etat = res.getString("etat");
+                    int nbreExemp = res.getInt("nbreExemp");
 
                     Livre book = new Livre(id, auteur, titre, edition, status, etat, nbreExemp);
-                    bookList.add(book);
+                    myList.add(book);
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error while retrieving books: " + e.getMessage());
+            System.out.println("Erreur lors de la récupération des livres : " + e);
         }
-        return bookList;
+        return myList;
     }
 
+    // Méthode pour obtenir un livre par son ID
     public Livre getBookById(String id) {
         ConnectToDb dbConnection = new ConnectToDb();
         Livre book = null;
 
-        String sql = "SELECT * FROM livres WHERE id = ?";
+        try (Connection conn = dbConnection.connexion("Yousenie", "lordeus", "bibliotheque_db");
+             PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM livres WHERE id = ?")) {
 
-        try {
-            dbConnection.chargerDriver();
-            try (Connection conn = dbConnection.connexion(DB_USER, DB_PASS, DB_NAME);
-                 PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, id);
-                ResultSet resultSet = statement.executeQuery();
+            preparedStatement.setString(1, id);
+            ResultSet res = preparedStatement.executeQuery();
 
-                if (resultSet.next()) {
-                    String idbook = resultSet.getString("id");
-                    String titre = resultSet.getString("titre");
-                    String auteur = resultSet.getString("auteur");
-                    String edition = resultSet.getString("edition");
-                    String status = resultSet.getString("status");
-                    String etat = resultSet.getString("etat");
-                    int nbreExemp = resultSet.getInt("nbreExemp");
+            if (res.next()) {
+                String idbook = res.getString("id");
+                String titre = res.getString("titre");
+                String auteur = res.getString("auteur");
+                String edition = res.getString("edition");
+                String status = res.getString("status");
+                String etat = res.getString("etat");
+                int nbreExemp = res.getInt("nbreExemp");
 
-                    book = new Livre(idbook, auteur, titre, edition, status, etat, nbreExemp);
-                }
+                book = new Livre(idbook, auteur, titre, edition, status, etat, nbreExemp);
             }
         } catch (Exception e) {
-            System.out.println("Error while retrieving book by ID: " + e.getMessage());
+            System.out.println("Erreur lors de la récupération du livre : " + e);
         }
         return book;
     }
 
+    // Méthode pour supprimer un livre
     public boolean deleteBook(String id) {
         ConnectToDb dbConnection = new ConnectToDb();
-        String sql = "DELETE FROM livres WHERE id = ?";
+        String req = "DELETE FROM livres WHERE id = ?";
 
-        try {
-            dbConnection.chargerDriver();
-            try (Connection conn = dbConnection.connexion(DB_USER, DB_PASS, DB_NAME);
-                 PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, id);
-                int rowsAffected = statement.executeUpdate();
+        try (Connection conn = dbConnection.connexion("Yousenie", "lordeus", "bibliotheque_db");
+             PreparedStatement preparedStatement = conn.prepareStatement(req)) {
 
-                if (rowsAffected > 0) {
-                    System.out.println("Record deleted successfully.");
-                    return true;
-                } else {
-                    System.out.println("Failed to delete the record.");
-                    return false;
-                }
+            preparedStatement.setString(1, id);
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Livre supprimé avec succès.");
+                return true;
+            } else {
+                System.out.println("Échec de la suppression du livre.");
+                return false;
             }
         } catch (Exception e) {
-            System.out.println("Error while deleting book: " + e.getMessage());
+            System.out.println("Erreur lors de la suppression du livre : " + e);
             return false;
         }
     }
 
+    // Méthode pour mettre à jour un livre
     public void updateBook(Livre book) {
         ConnectToDb dbConnection = new ConnectToDb();
         String sql = "UPDATE livres SET titre = ?, auteur = ?, edition = ?, status = ?, etat = ?, nbreExemp = ? WHERE id = ?";
 
-        try {
-            dbConnection.chargerDriver();
-            try (Connection conn = dbConnection.connexion(DB_USER, DB_PASS, DB_NAME);
-                 PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, book.getTitre());
-                statement.setString(2, book.getAuteur());
-                statement.setString(3, book.getEdition());
-                statement.setString(4, book.getStatut());
-                statement.setString(5, book.getEtat());
-                statement.setInt(6, book.getNbreExemp());
-                statement.setString(7, book.getCodeLivre());
+        try (Connection conn = dbConnection.connexion("Yousenie", "lordeus", "bibliotheque_db");
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-                int rowsAffected = statement.executeUpdate();
-                System.out.println(rowsAffected + " row(s) updated successfully.");
-            }
+            preparedStatement.setString(1, book.getTitre());
+            preparedStatement.setString(2, book.getAuteur());
+            preparedStatement.setString(3, book.getEdition());
+            preparedStatement.setString(4, book.getStatut());
+            preparedStatement.setString(5, book.getEtat());
+            preparedStatement.setInt(6, book.getNbreExemp());
+            preparedStatement.setString(7, book.getCodeLivre());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            System.out.println(rowsAffected + " livre(s) mis à jour avec succès.");
         } catch (Exception e) {
-            System.out.println("Error while updating book: " + e.getMessage());
+            System.out.println("Erreur lors de la mise à jour du livre : " + e);
         }
     }
-
-   
 }

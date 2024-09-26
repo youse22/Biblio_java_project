@@ -1,19 +1,34 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package projet2022;
 
+/**
+ * Classe représentant un livre dans la bibliothèque
+ * Auteur : Marie-Vonise LORDEUS
+ */
 public class Livre {
-    private String isbn;
-    private String titre;
-    private String auteur;
-    private int anneePublication; // Suppression de l'année dans le constructeur
-    private boolean hidden; // Statut pour masquer le livre
-    private String codeLivre;
-    private String edition;
-    private String statut;
-    private int nbreExemp;
-    private String etat;
+    private String codeLivre; // Code unique du livre
+    private String auteur; // Auteur du livre
+    private String titre; // Titre du livre
+    private String edition; // Édition du livre
+    private String statut; // Statut du livre (disponible, emprunté, etc.)
+    private String etat; // État du livre (bon, abîmé, etc.)
+    private int nbreExemp; // Nombre d'exemplaires disponibles
 
-    // Constructeur
+    /**
+     * Constructeur de la classe Livre
+     * 
+     * @param codeLivre Code unique du livre
+     * @param auteur Auteur du livre
+     * @param titre Titre du livre
+     * @param edition Édition du livre
+     * @param statut Statut du livre
+     * @param etat État du livre
+     * @param nbreExemp Nombre d'exemplaires disponibles
+     */
     public Livre(String codeLivre, String auteur, String titre, String edition, String statut, String etat, int nbreExemp) {
         this.codeLivre = codeLivre;
         this.auteur = auteur;
@@ -22,60 +37,74 @@ public class Livre {
         this.statut = statut;
         this.etat = etat;
         this.nbreExemp = nbreExemp;
-        this.hidden = false; // Par défaut, le livre n'est pas masqué
     }
 
-    public Livre(String bn, String titre, String auteur, int annee) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    // Getters et Setters
+    public String getCodeLivre() {
+        return codeLivre;
     }
 
-    // Getters et setters
-    public String getCodeLivre() { return codeLivre; }
-    public String getAuteur() { return auteur; }
-    public String getTitre() { return titre; }
-    public String getEdition() { return edition; }
-    public String getStatut() { return statut; }
-    public String getEtat() { return etat; }
-    public int getNbreExemp() { return nbreExemp; }
+    public void setCodeLivre(String codeLivre) {
+        this.codeLivre = codeLivre;
+    }
 
-    public void setCodeLivre(String codeLivre) { this.codeLivre = codeLivre; }
-    public void setAuteur(String auteur) { this.auteur = auteur; }
-    public void setTitre(String titre) { this.titre = titre; }
-    public void setEdition(String edition) { this.edition = edition; }
-    public void setStatut(String statut) { this.statut = statut; }
-    public void setEtat(String etat) { this.etat = etat; }
-    public void setNbreExemp(int nbreExemp) { this.nbreExemp = nbreExemp; }
+    public String getAuteur() {
+        return auteur;
+    }
 
-    // Méthode toString
+    public void setAuteur(String auteur) {
+        this.auteur = auteur;
+    }
+
+    public String getTitre() {
+        return titre;
+    }
+
+    public void setTitre(String titre) {
+        this.titre = titre;
+    }
+
+    public String getEdition() {
+        return edition;
+    }
+
+    public void setEdition(String edition) {
+        this.edition = edition;
+    }
+
+    public String getStatut() {
+        return statut;
+    }
+
+    public void setStatut(String statut) {
+        this.statut = statut;
+    }
+
+    public String getEtat() {
+        return etat;
+    }
+
+    public void setEtat(String etat) {
+        this.etat = etat;
+    }
+
+    public int getNbreExemp() {
+        return nbreExemp;
+    }
+
+    public void setNbreExemp(int nbreExemp) {
+        this.nbreExemp = nbreExemp;
+    }
+
     @Override
     public String toString() {
-        return "Code du livre: " + codeLivre +
-               "\nAuteur: " + auteur +
-               "\nTitre du livre: " + titre +
-               "\nStatut: " + statut +
-               "\nDate d'édition: " + edition +
-               "\nNombre d'exemplaires: " + nbreExemp +
-               "\n____________________________";
-    }
-
-    // Getters pour ISBN et année de publication
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public int getAnneePublication() {
-        return anneePublication;
-    }
-
-    public void setHidden(boolean hidden) {
-        this.hidden = hidden;
-    }
-
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    int getAnnee() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return "Code du livre\t\t: " + codeLivre +
+                "\nAuteur\t\t\t: " + auteur +
+                "\nTitre du livre\t\t: " + titre +
+                "\nStatut\t\t\t: " + statut +
+                "\nÉdition\t\t\t: " + edition +
+                "\nNombre d'exemplaires\t: " + nbreExemp +
+                "\nÉtat\t\t\t: " + etat +
+                "\n____________________________";
     }
 }
