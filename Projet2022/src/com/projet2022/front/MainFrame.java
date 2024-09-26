@@ -1,3 +1,4 @@
+
 package com.projet2022.front;
 
 import java.awt.*;
@@ -10,38 +11,37 @@ public class MainFrame {
         final JFrame frame = new JFrame("JFrame Example");
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-        // Titre principal
-        JLabel labelTet = new JLabel("BIBLIOTHÈQUE DE L'UNIVERSITÉ DE LA RENAISSANCE D'HAÏTI", JLabel.CENTER);
-        Font labelTetFont = new Font("Arial", Font.BOLD, 37);
-        labelTet.setForeground(Color.WHITE);
-        labelTet.setFont(labelTetFont);
-        labelTet.setOpaque(true);
-        labelTet.setBackground(Color.decode("#000066"));
-        labelTet.setPreferredSize(new Dimension(screenSize.width, 60)); // Largeur de la fenêtre entière
+        // Titre principal avec phrase de bienvenue
+        JLabel labelBienvenue = new JLabel("Bienvenue à la Bibliothèque de l'Université de la Renaissance d'Haïti", JLabel.CENTER);
+        labelBienvenue.setFont(new Font("Arial", Font.BOLD, 24));
+        labelBienvenue.setForeground(Color.WHITE);
+        labelBienvenue.setOpaque(true);
+        labelBienvenue.setBackground(Color.decode("#000066"));
+        labelBienvenue.setPreferredSize(new Dimension(screenSize.width, 60)); // Hauteur définie
 
-        JLabel labelTet1 = new JLabel("BURH", JLabel.CENTER);
-        labelTet1.setForeground(Color.WHITE);
-        labelTet1.setFont(labelTetFont);
-        labelTet1.setOpaque(true);
-        labelTet1.setBackground(Color.decode("#000066"));
-        labelTet1.setPreferredSize(new Dimension(screenSize.width, 50)); // Largeur de la fenêtre entière
+        // Créer un panel pour la disposition
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        
+        // Menu à gauche
+        JPanel leftMenuPanel = new JPanel(new GridLayout(0, 1)); // Une colonne pour le menu
+        leftMenuPanel.setBackground(Color.decode("#000066"));
+        leftMenuPanel.setPreferredSize(new Dimension(200, screenSize.height)); // Largeur fixe pour le menu
 
-        // Créer une barre de menu
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.setBackground(Color.decode("#000066"));
+        // Boutons du menu
+        JButton btnAdherent = new JButton("Adhérent");
+        JButton btnLivres = new JButton("Livres");
+        JButton btnPrets = new JButton("Prêts");
 
-        // Ajouter des éléments au menu
-        JMenu menu = new JMenu("Menu");
-        JMenuItem btnAdherent = new JMenuItem("Adhérent");
-        JMenuItem btnLivres = new JMenuItem("Livres");
-        JMenuItem btnPrets = new JMenuItem("Prêts");
+        // Style des boutons de menu
+        StyleButton(btnAdherent);
+        StyleButton(btnLivres);
+        StyleButton(btnPrets);
 
-        // Style des boutons
-        StyleMenuItem(btnAdherent);
-        StyleMenuItem(btnLivres);
-        StyleMenuItem(btnPrets);
-
-        // Actions des boutons avec classes anonymes
+        // Ajout des boutons au menu à gauche
+        leftMenuPanel.add(btnAdherent);
+        leftMenuPanel.add(btnLivres);
+        leftMenuPanel.add(btnPrets);
+    // Actions des boutons avec classes anonymes
         btnAdherent.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -62,22 +62,19 @@ public class MainFrame {
                 new PretsFrame(); // Ouvrir la fenêtre prêts
             }
         });
+        
+        // Zone principale (partie droite) en blanc
+        JPanel rightPanel = new JPanel();
+        rightPanel.setBackground(Color.WHITE);
 
-        // Ajouter les éléments de menu
-        menu.add(btnAdherent);
-        menu.add(btnLivres);
-        menu.add(btnPrets);
-        menuBar.add(menu);
-
-        // Panel principal de contenu
-        JPanel mainPanel = comp.panel(frame, comp.leftPanel()); // Créez le panel principal et le panel gauche
+        // Ajouter les éléments dans le panel principal
+        contentPanel.add(leftMenuPanel, BorderLayout.WEST); // Menu à gauche
+        contentPanel.add(rightPanel, BorderLayout.CENTER); // Zone principale à droite
 
         // Ajout des éléments dans le frame
         frame.setLayout(new BorderLayout());
-        frame.add(labelTet, BorderLayout.NORTH);
-        frame.add(labelTet1, BorderLayout.CENTER);
-        frame.setJMenuBar(menuBar); // Ajouter la barre de menu
-        frame.add(mainPanel, BorderLayout.CENTER); // Zone principale pour afficher les composants
+        frame.add(labelBienvenue, BorderLayout.NORTH); // Phrase de bienvenue en haut
+        frame.add(contentPanel, BorderLayout.CENTER); // Contenu principal avec menu et zone blanche
 
         // Paramètres de la fenêtre
         frame.setSize(screenSize);
@@ -85,10 +82,11 @@ public class MainFrame {
         frame.setVisible(true);
     }
 
-    // Méthode pour appliquer le style aux éléments de menu
-    private static void StyleMenuItem(JMenuItem menuItem) {
-        menuItem.setForeground(Color.WHITE);
-        menuItem.setBackground(Color.decode("#003366"));
-        menuItem.setFocusPainted(false); // Enlever le contour bleu du focus
+    // Méthode pour appliquer le style aux boutons
+    private static void StyleButton(JButton button) {
+        button.setForeground(Color.WHITE);
+        button.setBackground(Color.decode("#003366"));
+        button.setFocusPainted(false); // Enlever le contour bleu du focus
+        button.setFont(new Font("Arial", Font.PLAIN, 18));
     }
 }
